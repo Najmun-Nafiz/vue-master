@@ -11,5 +11,12 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js')
-    .sass('resources/sass/app.scss', 'public/css');
+mix.js('resources/js/app.js', 'public/js').vue();
+mix.sass('resources/sass/app.scss', 'public/css')
+    .css('./resources/js/assets/fontawesome-free/css/');
+
+    // mix.styles([
+    //     'resources/assets/fontawesome-free/css/all.min.css',
+    //     'resources/assets/css/styles.css',
+    //     'https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css'
+    // ], 'public/css');
