@@ -32,13 +32,13 @@ export default {
 
     created() {
     var scripts = [
-      "backend/js/scripts.js",
       "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js",
-      "backend/assets/demo/chart-area-demo.js",
-      "backend/assets/demo/chart-bar-demo.js",
       "https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js",
       "https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js",
-      "backend/assets/demo/datatables-demo.js"
+      "backend/assets/demo/chart-bar-demo.js",
+      "backend/assets/demo/chart-area-demo.js",
+      "backend/assets/demo/datatables-demo.js",
+      "backend/js/scripts.js"
     ];
     scripts.forEach(script => {
       let tag = document.createElement("script");
@@ -48,11 +48,6 @@ export default {
   }
 }
 </script>
-<style scoped>
-  /* @import './assets/fontawesome-free/css/all.min.css'; */
-
-  
-  @import './assets/css/styles.css';
-  @import 'https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css';
-  @import './assets/custom/cusom.css';
+<style>
+  @import './assets/fontawesome-free/css/all.min.css';
 </style>
