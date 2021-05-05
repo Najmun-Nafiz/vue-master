@@ -1,0 +1,33 @@
+
+.modal-backdrop{
+    background-color: #00000033 !important;
+}
+.invalid-feedback{
+    display: inline-block !important;
+}
+
+/* For notification modify start... */
+
+.snotify-icon{
+    height: 22px;
+    width: 22px;
+}
+.snotifyToast__inner{
+    min-height: 45px;
+}
+.snotifyToast__progressBar{
+    height: 7px;
+}
+.snotifyToast__progressBar__percentage{
+    height: 7px;
+}
+
+.snotify-success .snotifyToast__body{
+    color: #fdfdfd;
+}
+
+.snotify-success{
+    background-color: rgb(17, 146, 0);
+}
+
+/* For notification modify end... */

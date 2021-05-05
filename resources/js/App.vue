@@ -13,6 +13,7 @@
             <Footer />
         </div>
     </div>
+    <vue-snotify></vue-snotify>
 </div>
 </template>
 <script>
@@ -31,23 +32,10 @@ export default {
     },
 
     created() {
-    var scripts = [
-      "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js",
-      "https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js",
-      "https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js",
-      "backend/assets/demo/chart-bar-demo.js",
-      "backend/assets/demo/chart-area-demo.js",
-      "backend/assets/demo/datatables-demo.js",
-      "backend/js/scripts.js"
-    ];
-    scripts.forEach(script => {
-      let tag = document.createElement("script");
-      tag.setAttribute("src", script);
-      document.head.appendChild(tag);
-    });
   }
 }
 </script>
 <style>
   @import './assets/fontawesome-free/css/all.min.css';
+  @import './assets/custom/custom.css';
 </style>
