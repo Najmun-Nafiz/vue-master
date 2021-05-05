@@ -1,5 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+
+
+//All Route List..
 import Home from './views/Home.vue';
 import Categories from './views/Category.vue';
 
@@ -20,6 +23,7 @@ const routes = [
 ];
 
 const router = new Router({
+    mode: 'history',
     routes: routes,
     linkActiveClass: 'active'
 });
