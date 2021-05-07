@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -15,7 +16,20 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $data = Category::orderBy('id', 'desc')->get();
+        if(isset($data)){
+            return response()->json([
+                'message' => 'Data loaded successfully.',
+                'data' => $data,
+                'status_code' => 201
+            ], 201);
+        }
+        else{
+            return response()->json([
+                'message' => 'Some error occurred, please try agian',
+                'status_code' => 500
+            ], 500);
+        }
     }
 
     /**
@@ -52,7 +66,6 @@ class CategoryController extends Controller
                 'data' => $category,
                 'status_code' => 201
             ], 201);
-            return response()->json($category, 200);
         } else {
             return response()->json([
                 'message' => 'Some error occurred, please try agian',
@@ -103,8 +116,20 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Category $category)
     {
-        //
+        if ($category->delete()) {
+            Storage::delete('categoryImages/'.$category->image);
+
+            return response()->json([
+                'message' => 'Category deleted successfully!',
+                'status_code' => 201
+            ], 201);
+        } else {
+            return response()->json([
+                'message' => 'Some error occurred, please try again',
+                'status_code' => 500
+            ], 500);
+        }
     }
 }
