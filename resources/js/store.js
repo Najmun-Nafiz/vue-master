@@ -6,8 +6,18 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
         apiURL: 'http://localhost:8000/api',
-        serverPath: 'http://localhost:8000'
+        serverPath: 'http://localhost:8000',
+
+        isCategory: false
     },
-    mutations: {},
-    actions: {},
+    mutations: {
+        isCategory(state,payload){
+			state.isCategory=payload;
+		},
+    },
+    actions: {
+        isCategory(context, payload) {
+			context.commit('isCategory', payload);
+		},
+    },
 })

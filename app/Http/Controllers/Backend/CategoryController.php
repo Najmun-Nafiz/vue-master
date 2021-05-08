@@ -16,8 +16,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $data = Category::orderBy('id', 'desc')->get();
-        if(isset($data)){
+        $data = Category::orderBy('id', 'DESC')->paginate(3);
+        // $data = Category::orderBy('id', 'DESC')->select('id', 'name', 'image')->paginate(1);
+        if(!empty($data)){
             return response()->json([
                 'message' => 'Data loaded successfully.',
                 'data' => $data,
@@ -31,6 +32,7 @@ class CategoryController extends Controller
             ], 500);
         }
     }
+   
 
     /**
      * Show the form for creating a new resource.
@@ -105,9 +107,40 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Category $category)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+        ]);
+
+        
+
+        $category->name = $request->name;
+        $oldImagePath = $category->image;
+
+        if ($request->hasFile('image')) {
+            $request->validate([
+                'image' => 'image|mimes:jpeg,png,jpg',
+            ]);
+
+            $path = $request->file('image')->store('categoryImages');
+            $category->image = $path;
+
+            Storage::delete($oldImagePath);
+        }
+
+        if ($category->save()) {
+            return response()->json([
+                'message' => 'Category updated successfully!',
+                'status_code' => 201
+            ], 201);
+        } else {
+            Storage::delete($path);
+            return response()->json([
+                'message' => 'Some error occurred, Please try agian!',
+                'status_code' => 500
+            ], 500);
+        }
     }
 
     /**
@@ -119,7 +152,7 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         if ($category->delete()) {
-            Storage::delete('categoryImages/'.$category->image);
+            Storage::delete($category->image);
 
             return response()->json([
                 'message' => 'Category deleted successfully!',

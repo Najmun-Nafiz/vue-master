@@ -19,3 +19,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::resource('categories', 'Backend\CategoryController');
+Route::resource('products', 'Backend\ProdctController');
+Route::get('allcategory', 'Backend\ProdctController@allCategory');

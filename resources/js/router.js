@@ -5,6 +5,7 @@ import Router from 'vue-router';
 //All Route List..
 import Home from './views/Home.vue';
 import Categories from './views/Category.vue';
+import Product from './views/Product.vue';
 
 
 Vue.use(Router);
@@ -19,6 +20,11 @@ const routes = [
         path: '/categories',
         name: 'categories',
         component: Categories,
+    },
+    {
+        path: '/product',
+        name: 'product',
+        component: Product,
     }
 ];
 
