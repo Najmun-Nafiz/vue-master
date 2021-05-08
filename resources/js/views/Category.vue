@@ -37,16 +37,17 @@
                                 </tr>
                             </tfoot>
                             <tbody>
-                                <tr v-for="(result, index) in categories" :key="index">
-                                    <td>{{ result.id }}</td>
-                                    <td>{{ result.name }}</td>
-                                    <td>
-                                        <img :src="`${$store.state.serverPath}/storage/${result.image}`" class="img-fluid rounded" height="60" width="60" alt="">
-                                    </td>
-                                    <td>
-                                        <a name="" id="" class="btn btn-primary" href="#" role="button">Edit</a>
-                                        <a name="" id="" class="btn btn-danger" href="#" v-on:click="deleteModal(result)" role="button">Delete</a>
-                                    </td>
+                                <tr v-for="(result, index) in categories" :key="result.id" v-if='result'>
+                                  
+                                      <td>{{ result.id }}</td>
+                                      <td>{{ result.name }}</td>
+                                      <td>
+                                          <img :src="`${$store.state.serverPath}/storage/${result.image}`" class="img-fluid rounded" height="60" width="60" alt="">
+                                      </td>
+                                      <td>
+                                          <a name="" id="" class="btn btn-primary" href="#" role="button" @click="editModal(result)">Edit</a>
+                                          <a name="" id="" class="btn btn-danger" href="#" v-on:click="deleteModal(result)" role="button">Delete</a>
+                                      </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -74,7 +75,34 @@
 
                         <hr>
                         <div class="text-right">
-                            <button type="button" class="btn btn-default" @click="hideNewCategoryModal">Cancel</button>
+                            <button type="button" class="btn btn-secondary" @click="hideNewCategoryModal">Cancel</button>
+                            <button type="submit" class="btn btn-primary"><span class="fa fa-check"></span> Save</button>
+                        </div>
+                    </form>
+                </div>
+            </b-modal>
+            
+            <!-- Update Category Modal... -->
+            <b-modal ref="updateCategoryModal" centered hide-footer title="Update Category">
+                <div class="d-block">
+                    <form v-on:submit.prevent="updateCategory(categoryData.id)">
+                        <div class="form-group">
+                            <label for="name">Enter Name</label>
+                            <input type="text" v-model="categoryData.name" class="form-control" id="name" placeholder="Enter category name">
+                            <div class="invalid-feedback" v-if="errors.name">{{errors.name[0]}}</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="image">Choose an image</label>
+                            <div>
+                                <img :src="`${$store.state.serverPath}/storage/${categoryData.image}`" ref="newCategoryImageDispaly" width="200" height="100" />
+                            </div>
+                            <input type="file" v-on:change="attachImage" ref="newCategoryImage" class="form-control" id="image" />
+                            <div class="invalid-feedback" v-if="errors.image">{{errors.image[0]}}</div>
+                        </div>
+
+                        <hr>
+                        <div class="text-right">
+                            <button type="button" class="btn btn-secondary" @click="hideEditCategoryModal">Cancel</button>
                             <button type="submit" class="btn btn-primary"><span class="fa fa-check"></span> Save</button>
                         </div>
                     </form>
@@ -105,6 +133,7 @@ export default {
   data() {
     return {
       categoryData: {
+        id: "",
         name: "",
         image: "",
       },
@@ -113,7 +142,7 @@ export default {
         name: "",
       },
       categories: {},
-      errors: {},
+      errors: {}
     };
   },
 
@@ -121,20 +150,34 @@ export default {
     hideNewCategoryModal() {
       this.$refs.newCategoryModal.hide();
     },
+
     showNewCategoryModal() {
       this.$refs.newCategoryModal.show();
       this.categoryData = {
-            name: "",
-            image: "",
-        };
+        name: "",
+        image: "",
+      };
+    },
+
+    editModal(result) {
+      this.$refs.updateCategoryModal.show();
+      this.categoryData = {
+          id: result.id,
+          name: result.name,
+          image: result.image,
+      };
+    },
+
+    hideEditCategoryModal() {
+        this.$refs.updateCategoryModal.hide();
     },
 
     deleteModal(result) {
       this.$refs.deleteCategoryModal.show();
-      this.deleteData.id= result.id;
+      this.deleteData.id = result.id;
       this.deleteData.name = result.name;
     },
-    
+
     hideDeleteModal() {
       this.$refs.deleteCategoryModal.hide();
     },
@@ -154,14 +197,16 @@ export default {
     },
 
     getCategory: async function () {
-        try {
-            const response = await categoryService.getCategory();
-            if(response.data.status_code == 201){
-                this.categories= response.data.data;
-            }
-        } catch (error) {
-            this.$snotify.error(error.response.data.message);
+      try {
+        const response = await categoryService.getCategory();
+
+        if (response.data.status_code == 201) {
+            this.categories = response.data.data.data;
+            console.log('Category: '+response.data.data.data);
         }
+      } catch (error) {
+        this.$snotify.error(error.response.data.message);
+      }
     },
 
     createCategory: async function () {
@@ -172,47 +217,77 @@ export default {
       try {
         const response = await categoryService.createCategory(formData);
         if (response.data.status_code == 201) {
-            this.categories.unshift(response.data.data);
-            this.categoryData = {
-                name: "",
-                image: "",
-            };
-            this.$snotify.success(response.data.message);
-            this.hideNewCategoryModal();
+          this.categories.unshift(response.data.data);
+          this.categoryData = {
+            name: "",
+            image: "",
+          };
+          this.$snotify.success(response.data.message);
+          this.hideNewCategoryModal();
         }
       } catch (error) {
-            switch (error.response.status) {
-            case 422:
-                this.errors = error.response.data.errors;
-                this.$snotify.error(error.response.data.message);
-                break;
-            default:
-                this.$snotify.error(error.response.data.message);
-                break;
-            }
+        switch (error.response.status) {
+          case 422:
+            this.errors = error.response.data.errors;
+            this.$snotify.error(error.response.data.message);
+            break;
+          default:
+            this.$snotify.error(error.response.data.message);
+            break;
+        }
       }
     },
 
-    destroyCategory: async function(id){
+    updateCategory: async function (id) {
         try {
-            const response = await categoryService.destroyCategory(id)
-            if(response.data.status_code == 201){
-                this.getCategory();
-                this.hideDeleteModal();
-                this.$snotify.success(response.data.message);
-            }
-        } catch (error) {
-            this.$snotify.error(error.response.data.message);
-        }
-    }
+            const formData = new FormData();
+            formData.append("name", this.categoryData.name);
+            formData.append("image", this.categoryData.image);
+            formData.append('_method', 'put');
 
+            const response = await categoryService.updateCategory(id, formData);
+            if (response.data.status_code == 201) {
+                this.getCategory();
+                this.categoryData = {
+                    name: "",
+                    image: "",
+                };
+                this.$snotify.success(response.data.message);
+                this.hideEditCategoryModal();
+            }
+
+        } catch (error) {
+            switch (error.response.status) {
+                case 422:
+                    this.errors = error.response.data.errors;
+                    this.$snotify.error(error.response.data.message);
+                break;
+                default:
+                    this.$snotify.error(error.response.data.message);
+                break;
+            }
+        }
+    },
+
+    destroyCategory: async function (id) {
+      try {
+        const response = await categoryService.destroyCategory(id);
+        if (response.data.status_code == 201) {
+          this.getCategory();
+          this.hideDeleteModal();
+          this.$snotify.success(response.data.message);
+        }
+      } catch (error) {
+        this.$snotify.error(error.response.data.message);
+      }
+    },
   },
 
   created() {
     this.getCategory();
+    this.$store.dispatch('isCategory', true);
   },
 };
 </script>
 <style>
-    
 </style>

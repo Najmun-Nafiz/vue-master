@@ -11,6 +11,10 @@
                         <i class="fas fa-fw fa-chart-area"></i>
                         <span>Categories</span>
                     </router-link>
+                    <router-link to="/product" class="nav-link" exact>
+                        <i class="fas fa-cart-plus"></i>
+                        <span class=" ml-1">Products</span>
+                    </router-link>
                 </div>
             </div>
         </nav>
