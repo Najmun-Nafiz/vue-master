@@ -20,5 +20,7 @@ Route::group(['prefix' => 'auth'], function () {
 
 
 Route::resource('categories', 'Backend\CategoryController');
+Route::get('search/categories/{field}/{query}', 'Backend\CategoryController@search');
+
 Route::resource('products', 'Backend\ProdctController');
 Route::get('allcategory', 'Backend\ProdctController@allCategory');

@@ -16,7 +16,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $data = Category::orderBy('id', 'DESC')->paginate(3);
+        $data = Category::orderBy('id', 'DESC')->paginate(1);
         // $data = Category::orderBy('id', 'DESC')->select('id', 'name', 'image')->paginate(1);
         if(!empty($data)){
             return response()->json([
@@ -31,6 +31,21 @@ class CategoryController extends Controller
                 'status_code' => 500
             ], 500);
         }
+    }
+
+    public function search($field, $query)
+    {
+        //You can search from all of your table column name....
+        // $data = Category::where('id','LIKE',"%$query%")
+        //         ->orWhere('name','LIKE',"%$query%")
+        //         ->latest()->paginate(2);
+
+        $data = Category::where($field,'LIKE',"%$query%")->latest()->paginate(2);
+        return response()->json([
+            'message' => 'Data loaded successfully.',
+            'data' => $data,
+            'status_code' => 201
+        ], 201);
     }
    
 
