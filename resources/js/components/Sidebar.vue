@@ -3,7 +3,7 @@
         <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
             <div class="sb-sidenav-menu">
                 <div class="nav">
-                    <router-link to="/" class="nav-link" exact>
+                    <router-link to="/dashboard" class="nav-link" exact>
                         <i class="fas fa-fw fa-tachometer-alt"></i>
                         <span>Dashboard</span>
                     </router-link>
