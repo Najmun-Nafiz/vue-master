@@ -12,6 +12,11 @@
                     <button class="btn btn-primary btn-sm ml-auto float-right" @click="showNewCategoryModal">
                         <span class="fa fa-plus"></span> Create New</button>
                 </div>
+                  <div class="row mt-2 mb-4">
+                    <div class="col-md-3 position-absolute m-0 p-0" style="right:20px;">
+                      <input v-model="query" type="text" class="form-control float-right" placeholder="Search">
+                    </div>
+                  </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table
@@ -51,6 +56,15 @@
                                 </tr>
                             </tbody>
                         </table>
+
+                        <Pagination v-if="pagination.last_page > 1" 
+                                
+                                :pagination="pagination"
+                                :offset="5"
+                                @paginate="query === '' ? getCategory() : searchData()"
+                                
+                            ></Pagination>
+
                     </div>
                 </div>
             </div>
@@ -127,6 +141,7 @@
     </div>
 </template>
 <script>
+import Pagination from './partials/Pagination';
 import * as categoryService from "../services/category_service";
 export default {
   name: "category",
@@ -142,8 +157,28 @@ export default {
         name: "",
       },
       categories: {},
-      errors: {}
+      errors: {},
+
+      query: "",
+      queryField: "name",
+      pagination: {
+        current_page: 1,
+      },
     };
+  },
+
+  components: {
+        Pagination
+    },
+
+  watch: {
+    query: function (newQ, old) {
+      if (newQ === "") {
+        this.getCategory();
+      } else {
+        this.searchData();
+      }
+    },
   },
 
   methods: {
@@ -162,14 +197,14 @@ export default {
     editModal(result) {
       this.$refs.updateCategoryModal.show();
       this.categoryData = {
-          id: result.id,
-          name: result.name,
-          image: result.image,
+        id: result.id,
+        name: result.name,
+        image: result.image,
       };
     },
 
     hideEditCategoryModal() {
-        this.$refs.updateCategoryModal.hide();
+      this.$refs.updateCategoryModal.hide();
     },
 
     deleteModal(result) {
@@ -198,14 +233,17 @@ export default {
 
     getCategory: async function () {
       try {
-        const response = await categoryService.getCategory();
+        var page = this.pagination.current_page;
+        const response = await categoryService.getCategory(page);
 
         if (response.data.status_code == 201) {
-            this.categories = response.data.data.data;
-            console.log('Category: '+response.data.data.data);
+          this.categories = response.data.data.data;
+          this.pagination=response.data.data;
+          console.log("Category: " + response.data.data.data);
         }
       } catch (error) {
-        this.$snotify.error(error.response.data.message);
+        console.log(error);
+        // this.$snotify.error(error.response.data.message);
       }
     },
 
@@ -239,34 +277,33 @@ export default {
     },
 
     updateCategory: async function (id) {
-        try {
-            const formData = new FormData();
-            formData.append("name", this.categoryData.name);
-            formData.append("image", this.categoryData.image);
-            formData.append('_method', 'put');
+      try {
+        const formData = new FormData();
+        formData.append("name", this.categoryData.name);
+        formData.append("image", this.categoryData.image);
+        formData.append("_method", "put");
 
-            const response = await categoryService.updateCategory(id, formData);
-            if (response.data.status_code == 201) {
-                this.getCategory();
-                this.categoryData = {
-                    name: "",
-                    image: "",
-                };
-                this.$snotify.success(response.data.message);
-                this.hideEditCategoryModal();
-            }
-
-        } catch (error) {
-            switch (error.response.status) {
-                case 422:
-                    this.errors = error.response.data.errors;
-                    this.$snotify.error(error.response.data.message);
-                break;
-                default:
-                    this.$snotify.error(error.response.data.message);
-                break;
-            }
+        const response = await categoryService.updateCategory(id, formData);
+        if (response.data.status_code == 201) {
+          this.getCategory();
+          this.categoryData = {
+            name: "",
+            image: "",
+          };
+          this.$snotify.success(response.data.message);
+          this.hideEditCategoryModal();
         }
+      } catch (error) {
+        switch (error.response.status) {
+          case 422:
+            this.errors = error.response.data.errors;
+            this.$snotify.error(error.response.data.message);
+            break;
+          default:
+            this.$snotify.error(error.response.data.message);
+            break;
+        }
+      }
     },
 
     destroyCategory: async function (id) {
@@ -281,11 +318,27 @@ export default {
         this.$snotify.error(error.response.data.message);
       }
     },
+
+    searchData: async function() {
+
+        try {
+          var queryField = this.queryField;
+          var query = this.query;
+          var page = this.pagination.current_page;
+          const response = await categoryService.searchCategory(queryField, query, page);
+          if (response.data.status_code == 201) {
+            this.categories = response.data.data.data;
+            this.pagination = response.data.data;
+          }
+        } catch (error) {
+          this.$snotify.error(error.response.data.message);
+        }
+    },
   },
 
   created() {
     this.getCategory();
-    this.$store.dispatch('isCategory', true);
+    this.$store.dispatch("isCategory", true);
   },
 };
 </script>
