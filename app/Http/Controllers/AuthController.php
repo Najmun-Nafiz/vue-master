@@ -43,7 +43,7 @@ class AuthController extends Controller
 
         if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             return response()->json([
-                'message' => 'Invalid username/password',
+                'message' => 'Invalid Username/Password',
                 'status_code' => 401
             ], 401);
         }
@@ -69,6 +69,7 @@ class AuthController extends Controller
                 'token_type' => 'Bearer',
                 'token_scope' => $tokenData->token->scopes[0],
                 'expires_at' => Carbon::parse($tokenData->token->expires_at)->toDateTimeString(),
+                'message' => 'Successflly Loged-In...',
                 'status_code' => 200
             ], 200);
         } else {
@@ -85,5 +86,16 @@ class AuthController extends Controller
             'message' => 'Logout successfully!',
             'status_code' => 200
         ], 200);
+    }
+
+    public function profile(Request $request) {
+        if ($request->user()) {
+            return response()->json($request->user(), 200);
+        }
+
+        return response()->json([
+            'message' => 'Not loggedin',
+            'status_code' => 500
+        ], 500);
     }
 }
