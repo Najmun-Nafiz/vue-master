@@ -9,15 +9,16 @@ import Categories from './views/Category.vue';
 import Product from './views/Product.vue';
 
 //For Route List...
+import Login from './views/auth/Login.vue';
 import Register from './views/auth/Register.vue';
+import ResetPassword from './views/auth/ResetPassword.vue';
 
-
+import * as auth from './services/auth_service';
 Vue.use(Router);
 
 const routes = [
     {
         path: '/dashboard',
-        name: 'dashboard',
         component: Dashboard,
         children: [
             {
@@ -35,7 +36,15 @@ const routes = [
                 name: 'product',
                 component: Product,
             },
-        ]
+        ],
+
+        beforeEnter(to, from, next) {
+            if (!auth.isLoggedIn()) {
+                next('/login');
+            } else {
+                next();
+            }
+        }
     },
     
 
@@ -44,6 +53,23 @@ const routes = [
         path: '/register',
         name: 'register',
         component: Register
+    },
+    {
+        path: '/login',
+        name: 'login',
+        component: Login,
+        beforeEnter(to, from, next) {
+            if (!auth.isLoggedIn()) {
+                next();
+            } else {
+                next('/dashboard');
+            }
+        }
+    },
+    {
+        path: '/resetPassword',
+        name: 'resetPassword',
+        component: ResetPassword
     },
 ];
 
