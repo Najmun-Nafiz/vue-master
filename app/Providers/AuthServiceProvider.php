@@ -26,7 +26,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
         Passport::tokensCan([
-            'admin' => 'Administrator token scope',
+            'admin' => 'Admin token scope',
             'user' => 'User token scope',
         ]);
     }
