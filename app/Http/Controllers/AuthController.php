@@ -50,7 +50,7 @@ class AuthController extends Controller
 
         $user = $request->user();
 
-        if ($user->role == 'administrator') {
+        if ($user->role == 'admin') {
             $tokenData = $user->createToken('Personal Access Token', ['admin']);
         } else {
             $tokenData = $user->createToken('Personal Access Token', ['user']);

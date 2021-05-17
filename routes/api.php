@@ -19,9 +19,15 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 
+Route::group(['middleware' => 'auth:api'], function () {
 
-Route::resource('categories', 'Backend\CategoryController');
-Route::get('search/categories/{field}/{query}', 'Backend\CategoryController@search');
+    Route::group(['middleware' => 'scope:user'], function () {
+        Route::resource('categories', 'Backend\CategoryController');
+        Route::get('search/categories/{field}/{query}', 'Backend\CategoryController@search');
+    });
+    Route::group(['middleware' => 'scope:admin'], function () {
+        Route::resource('products', 'Backend\ProdctController');
+        Route::get('allcategory', 'Backend\ProdctController@allCategory');
+    });
 
-Route::resource('products', 'Backend\ProdctController');
-Route::get('allcategory', 'Backend\ProdctController@allCategory');
+});

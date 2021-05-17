@@ -71,7 +71,7 @@
                         <div class="form-group">
                           <label for="">Select Category</label>
                           <select v-model="productData.categoryId" id="categoryId" name="categoryId" class="form-control">
-                            <option selected>Select One</option>
+                            <option selected="true">{{ selectOption }}</option>
                             <option v-for="(result, index) in categories" :key="result.id" :value="result.id">{{ result.name }}</option>
                             <div class="invalid-feedback" v-if="errors.categoryId">{{errors.categoryId[0]}}</div>
                           </select>
@@ -164,7 +164,8 @@ export default {
       },
       products: {},
       categories: {},
-      errors: {}
+      selectOption: "Select Category",
+      errors: {},
     };
   },
 
